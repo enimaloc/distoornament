@@ -16,8 +16,19 @@
 
 package com.github.enimaloc.distoornament;
 
-public class Main {
-    public static void main(String[] args) {
-        new Distoornament();
+import discord4j.core.DiscordClient;
+import discord4j.core.GatewayDiscordClient;
+
+public class Distoornament {
+    
+    private final GatewayDiscordClient gateway;
+    
+    public Distoornament() {
+        DiscordClient client = DiscordClient.create(System.getenv("token"));
+        
+        this.gateway = client.login().block();
+        assert gateway != null;
+        
+        this.gateway.onDisconnect().block();
     }
 }
