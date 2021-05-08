@@ -21,6 +21,9 @@ plugins {
 
 group 'com.github.enimaloc'
 version '1.0-SNAPSHOT'
+targetCompatibility = JavaVersion.VERSION_1_9
+//noinspection GroovyUnusedAssignment
+sourceCompatibility = targetCompatibility
 
 repositories {
     mavenCentral()
