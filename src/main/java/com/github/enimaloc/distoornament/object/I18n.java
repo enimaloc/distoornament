@@ -79,7 +79,7 @@ public class I18n {
         this.language = language;
         this.country = country;
         this.values = values;
-        locales.merge(language, Map.of(country, this), (m1, m2) -> {
+        LOCALES.merge(language, Map.of(country, this), (m1, m2) -> {
             m1.putAll(m2);
             return m1;
         });
@@ -101,7 +101,7 @@ public class I18n {
     public static I18n getI18n(String language, String country) {
         return Mono.zip(Mono.just(language).map(String::toLowerCase), Mono.just(country).map(String::toLowerCase))
                    .map(identifier -> Tuples.of(identifier.getT1(), identifier.getT2()))
-                   .map(tuple -> tuple.mapT1(locales::get))
+                   .map(tuple -> tuple.mapT1(LOCALES::get))
                    .map(tuple -> tuple.mapT2(tuple.getT1()::get))
                    .map(Tuple2::getT2)
                    .block();
