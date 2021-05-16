@@ -66,16 +66,16 @@ public interface Command {
     
     interface Context {
         Command getCommand();
-        
+    
         String getCommandName();
-        
+    
         Mono<Guild> getGuild();
-        
-        Mono<Optional<User>> getAuthor();
-        
-        Mono<Optional<Member>> getMember();
-        
-        Mono<GatewayDiscordClient> getClient();
+    
+        Optional<User> getAuthor();
+    
+        Optional<Member> getMember();
+    
+        GatewayDiscordClient getClient();
     }
     
     class TextContext implements Context {
@@ -105,28 +105,28 @@ public interface Command {
         public Mono<Guild> getGuild() {
             return event.getGuild();
         }
-        
+    
         @Override
-        public Mono<Optional<User>> getAuthor() {
-            return Mono.just(event.getMessage().getAuthor());
+        public Optional<User> getAuthor() {
+            return event.getMessage().getAuthor();
         }
-        
+    
         @Override
-        public Mono<Optional<Member>> getMember() {
-            return Mono.just(event.getMember());
+        public Optional<Member> getMember() {
+            return event.getMember();
         }
-        
+    
         @Override
-        public Mono<GatewayDiscordClient> getClient() {
-            return Mono.just(event.getClient());
+        public GatewayDiscordClient getClient() {
+            return event.getClient();
         }
-        
+    
         public String getArguments() {
             return arguments;
         }
-        
-        public Mono<Message> getMessage() {
-            return Mono.just(event.getMessage());
+    
+        public Message getMessage() {
+            return event.getMessage();
         }
     }
     
@@ -153,24 +153,24 @@ public interface Command {
         public Mono<Guild> getGuild() {
             return event.getInteraction().getGuild();
         }
-        
+    
         @Override
-        public Mono<Optional<User>> getAuthor() {
-            return Mono.just(Optional.of(event.getInteraction().getUser()));
+        public Optional<User> getAuthor() {
+            return Optional.of(event.getInteraction().getUser());
         }
-        
+    
         @Override
-        public Mono<Optional<Member>> getMember() {
-            return Mono.just(event.getInteraction().getMember());
+        public Optional<Member> getMember() {
+            return event.getInteraction().getMember();
         }
-        
+    
         @Override
-        public Mono<GatewayDiscordClient> getClient() {
-            return Mono.just(event.getClient());
+        public GatewayDiscordClient getClient() {
+            return event.getClient();
         }
-        
-        public Mono<InteractionCreateEvent> getEvent() {
-            return Mono.just(event);
+    
+        public InteractionCreateEvent getEvent() {
+            return event;
         }
     }
 }
