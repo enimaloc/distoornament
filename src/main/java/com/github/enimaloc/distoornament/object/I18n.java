@@ -85,28 +85,38 @@ public class I18n {
         });
     }
     
-    public static I18n getI18n(String locale) {
+    public static Optional<I18n> getI18n(String locale) {
         return Mono.just(locale)
-                   .map(s -> s.split("-"))
-                   .filter(split -> split.length <= 2)
-                   .map(identifier -> Tuples.of(identifier[0], identifier[1]))
-                   .map(I18n::getI18n)
-                   .block();
+                .map(s -> s.split("-"))
+                .filter(split -> split.length <= 2)
+                .map(identifier -> Tuples.of(identifier[0], identifier[1]))
+                .map(I18n::getI18n)
+                .block();
     }
-    
-    public static I18n getI18n(Tuple2<String, String> identifier) {
+
+    public static Optional<I18n> getI18n(Tuple2<String, String> identifier) {
         return getI18n(identifier.getT1(), identifier.getT2());
     }
-    
-    public static I18n getI18n(String language, String country) {
+
+    public static Optional<I18n> getI18n(String language, String country) {
         return Mono.zip(Mono.just(language).map(String::toLowerCase), Mono.just(country).map(String::toLowerCase))
-                   .map(identifier -> Tuples.of(identifier.getT1(), identifier.getT2()))
-                   .map(tuple -> tuple.mapT1(LOCALES::get))
-                   .map(tuple -> tuple.mapT2(tuple.getT1()::get))
-                   .map(Tuple2::getT2)
-                   .block();
+                .map(identifier -> Tuples.of(identifier.getT1(), identifier.getT2()))
+                .map(tuple -> tuple.mapT1(LOCALES::get))
+                .map(tuple -> tuple.mapT2(tuple.getT1()::get))
+                .map(Tuple2::getT2)
+                .blockOptional();
     }
-    
+
+    public static Map<String, String> getAllLanguages() {
+        Map<String, String> r = new HashMap<>();
+        for (String language : LOCALES.keySet()) {
+            for (String country : LOCALES.get(language).keySet()) {
+                r.put(language, country);
+            }
+        }
+        return Collections.unmodifiableMap(r);
+    }
+
     @SafeVarargs
     public final String get(String key, Tuple2<String, String>... values) {
         if (!this.values.containsKey(key)) {
@@ -121,6 +131,6 @@ public class I18n {
     
     @Override
     public String toString() {
-        return language + country.toUpperCase(Locale.ROOT);
+        return language + "-" + country.toUpperCase(Locale.ROOT);
     }
 }
