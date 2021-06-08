@@ -16,18 +16,41 @@
 
 package com.github.enimaloc.distoornament;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import com.github.enimaloc.commands.CommandHandler;
 import discord4j.core.DiscordClient;
+import io.sentry.Sentry;
+import org.apache.commons.lang3.SystemUtils;
+import org.slf4j.LoggerFactory;
+
+import java.util.Locale;
 
 public class Distoornament {
     
-    public Distoornament() {
-        DiscordClient client = DiscordClient.create(System.getenv("token"));
+    private final Logger logger = (Logger) LoggerFactory.getLogger(Distoornament.class);
     
+    public Distoornament() {
+        ((Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME))
+                .setLevel(Level.toLevel(
+                        System.getenv("logLevel") != null ? System.getenv("logLevel").toUpperCase(Locale.ROOT) : null,
+                        Level.INFO
+                ));
+        
+        logger.info("Starting Distoornament (v. {})", Constant.VERSION);
+        
+        Sentry.init(options -> {
+            options.setDsn(System.getenv("sentry"));
+            options.setDist(SystemUtils.OS_ARCH);
+            options.setEnvironment(System.getenv("dev") != null ? "Development" : "Production");
+        });
+        
+        DiscordClient client = DiscordClient.create(System.getenv("token"));
+        
         client.withGateway(gateway -> {
             new CommandHandler(gateway, "!"
             );
-        
+            
             return gateway.onDisconnect();
         }).block();
     }
