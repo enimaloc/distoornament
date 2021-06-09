@@ -19,6 +19,7 @@ package com.github.enimaloc.distoornament;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import com.github.enimaloc.commands.CommandHandler;
+import com.github.enimaloc.distoornament.object.I18n;
 import discord4j.core.DiscordClient;
 import io.sentry.Sentry;
 import org.apache.commons.lang3.SystemUtils;
@@ -38,6 +39,7 @@ public class Distoornament {
                 ));
         
         logger.info("Starting Distoornament (v. {})", Constant.VERSION);
+        I18n.init(this.getClass());
         
         Sentry.init(options -> {
             options.setDsn(System.getenv("sentry"));
